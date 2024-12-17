@@ -42,7 +42,17 @@ def carregar_tabelas(diretorio):
 # Rota principal (carregar tabelas)
 @app.route("/", methods=["GET", "POST"])
 def index():
+    
     global tabelas_encontradas
+
+    # Verifica se é uma nova sessão e limpa os dados
+    if session.new or "tabelas" not in session:
+        tabelas_encontradas.clear()
+        session.clear()  # Limpa todos os dados da sessão
+        session.modified = True  # Garante que a sessão será salva
+
+    print(tabelas_encontradas)  # Para depuração
+
     if request.method == "POST":
         diretorio = request.form["diretorio"]
         if not os.path.exists(diretorio):
