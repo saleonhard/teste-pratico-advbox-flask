@@ -55,8 +55,8 @@ def processar_tabela_clientes(tabela):
     # Adiciona o campo de anotações sobre CPF/CNPJ
     df['ANOTAÇÕES GERAIS'] = df.apply(
     lambda x: (
-        f"{x['ANOTAÇÕES GERAIS']}; CPF/CNPJ inválido: "
-        f"{x['cpf'] if pd.notna(x['cpf']) and x['cpf'] != '' else (x['cnpj'] if pd.notna(x['cnpj']) and x['cnpj'] != '' else 'SEM CPF/CNPJ cadastrado')}"
+        f"{x['ANOTAÇÕES GERAIS']}; "
+        f"{'CPF/CNPJ inválido: ' + (x['cpf'] if pd.notna(x['cpf']) and x['cpf'] != '' else x['cnpj']) if (pd.notna(x['cpf']) and x['cpf'] != '') or (pd.notna(x['cnpj']) and x['cnpj'] != '') else 'Sem CPF/CNPJ cadastrado'}"
     ).strip('; ')
     if pd.notna(x['ANOTAÇÕES CPF/CNPJ']) else x['ANOTAÇÕES GERAIS'],
     axis=1
@@ -67,11 +67,10 @@ def processar_tabela_clientes(tabela):
         lambda x: f"{x['ANOTAÇÕES GERAIS']}; email2: {x['email2']}" if pd.notna(x['email2']) and x['email2'].strip() != '' and pd.notna(x['email1']) else x['ANOTAÇÕES GERAIS'],
         axis=1
     )
-    df['CPF'] = df['cpf'] 
-    df['CNPJ'] = df['cnpj']
+
     # Campos de saída
     campos_saida = [
-        'NOME', 'CPF CNPJ','CPF', 'CNPJ','RG', 'NACIONALIDADE', 'DATA DE NASCIMENTO',
+        'NOME', 'CPF CNPJ','RG', 'NACIONALIDADE', 'DATA DE NASCIMENTO',
         'ESTADO CIVIL', 'PROFISSÃO', 'SEXO', 'CELULAR', 'TELEFONE', 'EMAIL',
         'PAIS', 'ESTADO', 'CIDADE', 'BAIRRO', 'ENDEREÇO', 'CEP',
         'PIS PASEP', 'CTPS', 'CID', 'NOME DA MÃE', 'ORIGEM DO CLIENTE',
