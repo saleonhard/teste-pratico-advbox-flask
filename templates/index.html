@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="https://advbox.com.br/favicon.ico" type="image/x-icon">
+    <title>Ferramenta de Migração</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- CSS Customizado para Sticky Footer -->
+    <style>
+        html, body {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1; /* Faz o conteúdo crescer e preencher o espaço disponível */
+           
+        }
+
+        footer {
+            background-color: #105fa8;
+            color: white;
+        }
+    </style>
+</head>
+<body style="background-color: #1b2031;">
+    <div class="container mt-5 content">
+        <div class="card shadow">
+            <div class="card-header text-white" style=" background-color: #105fa8 ; display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+                <img loading="lazy" src="https://advbox.com.br/assets/img/icons/advbox-logo.svg" alt="Logotipo ADVBOX">
+                <!-- <h3>Ferramenta de Migração</h3> -->
+            </div>
+            <div class="card-body">
+                <!-- Formulário para selecionar diretório -->
+                <form method="POST" class="mb-4">
+                    <div class="mb-3">
+                        <label for="diretorio" class="form-label">Selecione o diretório:</label>
+                        <div class="input-group">
+                            <input type="text" id="diretorio" name="diretorio" class="form-control" placeholder="Digite o caminho do diretório" required>
+                            <button type="submit" style=" background-color: #105fa8"  class="btn btn-primary">Carregar Tabelas</button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Mensagens de feedback -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="alert alert-dismissible fade show" role="alert">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} mb-2">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Exibição das Tabelas Carregadas -->
+                {% if tabelas_encontradas %}
+                    <h6 class="mt-4">Tabelas Encontradas:</h6>
+                    <ul class="list-group">
+                        {% for tabela in tabelas_encontradas %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ tabela }}
+                                <a href="{{ url_for('download', nome_tabela=tabela) }}" class="btn btn-success btn-sm">Download Processado</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <!-- Botão para apagar os dados -->
+                    <form method="POST" action="{{ url_for('apagar_dados') }}">
+                        <button type="submit" class="btn btn-danger mt-4">Apagar Dados Carregados</button>
+                    </form>
+
+                {% else %}
+                    <p class="text-muted">Por favor, selecione um diretório válido.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-5 py-3 text-center">
+        <div class="container">
+            <p>&copy; 2024 ADVBOX. Todos os direitos reservados.</p>
+            <p><a href="https://www.advbox.com.br" target="_blank" class="text-white">Visite nosso site</a></p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
