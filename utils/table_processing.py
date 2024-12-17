@@ -20,10 +20,10 @@ def processar_tabela_clientes(tabela):
 
 
     df['RG'] = df['rg'].str.strip()
-    df['NACIONALIDADE'] = df['nacionalidade'].fillna('MIGRAÇÃO')
+    df['NACIONALIDADE'] = df['nacionalidade']
     df['DATA DE NASCIMENTO'] = pd.to_datetime(df['nascimento'], errors='coerce').dt.strftime('%d/%m/%Y')
-    df['ESTADO CIVIL'] = df['estado_civil'].fillna('MIGRAÇÃO')
-    df['PROFISSÃO'] = df['profissao'].fillna('MIGRAÇÃO')
+    df['ESTADO CIVIL'] = df['estado_civil']
+    df['PROFISSÃO'] = df['profissao']
     df['SEXO'] = ''
     
     # Atualizando celular e telefone
@@ -37,7 +37,7 @@ def processar_tabela_clientes(tabela):
     df['BAIRRO'] = df['bairro'].str.strip()
     df['ENDEREÇO'] = df['logradouro'].str.strip()
     df['CEP'] = df['cep'].apply(format_cep)
-    df['PIS PASEP'] = df['pis'].str.strip()
+    df['PIS PASEP'] = df['pis'].fillna('').astype(str).str.strip()
     df['CTPS'] = ''
     df['CID'] = ''
     df['NOME DA MÃE'] = df['nome_mae'].str.strip()
@@ -51,21 +51,27 @@ def processar_tabela_clientes(tabela):
 
     # Inicializando a coluna ANOTAÇÕES GERAIS
     df['ANOTAÇÕES GERAIS'] = df['observacoes'].fillna('')
+
+    # Adiciona o campo de anotações sobre CPF/CNPJ
     df['ANOTAÇÕES GERAIS'] = df.apply(
-    lambda x: f"{x['ANOTAÇÕES GERAIS']}; CPF/CNPJ inválido: {x['cpf'] or x['cnpj']}".strip('; ')
+    lambda x: (
+        f"{x['ANOTAÇÕES GERAIS']}; CPF/CNPJ inválido: "
+        f"{x['cpf'] if pd.notna(x['cpf']) and x['cpf'] != '' else (x['cnpj'] if pd.notna(x['cnpj']) and x['cnpj'] != '' else 'SEM CPF/CNPJ cadastrado')}"
+    ).strip('; ')
     if pd.notna(x['ANOTAÇÕES CPF/CNPJ']) else x['ANOTAÇÕES GERAIS'],
     axis=1
-     ) # Adiciona o campo de anotações sobre CPF/CNPJ
+    )
 
     # Se o email2 estiver presente e email1 também, adicionar email2 como anotação
     df['ANOTAÇÕES GERAIS'] = df.apply(
         lambda x: f"{x['ANOTAÇÕES GERAIS']}; email2: {x['email2']}" if pd.notna(x['email2']) and x['email2'].strip() != '' and pd.notna(x['email1']) else x['ANOTAÇÕES GERAIS'],
         axis=1
     )
-
+    df['CPF'] = df['cpf'] 
+    df['CNPJ'] = df['cnpj']
     # Campos de saída
     campos_saida = [
-        'NOME', 'CPF CNPJ', 'RG', 'NACIONALIDADE', 'DATA DE NASCIMENTO',
+        'NOME', 'CPF CNPJ','CPF', 'CNPJ','RG', 'NACIONALIDADE', 'DATA DE NASCIMENTO',
         'ESTADO CIVIL', 'PROFISSÃO', 'SEXO', 'CELULAR', 'TELEFONE', 'EMAIL',
         'PAIS', 'ESTADO', 'CIDADE', 'BAIRRO', 'ENDEREÇO', 'CEP',
         'PIS PASEP', 'CTPS', 'CID', 'NOME DA MÃE', 'ORIGEM DO CLIENTE',

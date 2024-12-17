@@ -14,65 +14,52 @@ tabelas_encontradas = set()
 temp_dir = tempfile.mkdtemp()  # Diretório temporário para armazenar os arquivos
 
 
-# Função para carregar tabelas de um diretório
-def carregar_tabelas(diretorio):
-
-    tabelas = {}
-    
-    for arquivo in os.listdir(diretorio):
-        if arquivo.endswith(".csv"):
-            caminho = os.path.join(diretorio, arquivo)
-            
-            # Carrega os dados do CSV
-            dados = []
-            with open(caminho, mode='r', encoding='utf-8', errors='replace') as file:
-                reader = csv.reader(file, delimiter=';')  # Altere o delimitador se necessário
-                headers = next(reader)
-                for row in reader:
-                    dados.append(row)
-            
-            # Cria o DataFrame e adiciona ao dicionário
-            tabela = pd.DataFrame(dados, columns=headers)
-            nome_limpo = arquivo.replace("v_", "").replace("_CodEmpresa_92577.csv", "")
-            tabelas[nome_limpo] = tabela
-            
-    return tabelas
-
-
 # Rota principal (carregar tabelas)
 @app.route("/", methods=["GET", "POST"])
 def index():
-    
     global tabelas_encontradas
 
-    # Verifica se é uma nova sessão e limpa os dados
+    # Limpar dados na sessão em caso de nova sessão
     if session.new or "tabelas" not in session:
         tabelas_encontradas.clear()
-        session.clear()  # Limpa todos os dados da sessão
-        session.modified = True  # Garante que a sessão será salva
-
-    print(tabelas_encontradas)  # Para depuração
+        session.clear()
+        session.modified = True
 
     if request.method == "POST":
-        diretorio = request.form["diretorio"]
-        if not os.path.exists(diretorio):
-            flash("Por favor, selecione um diretório válido.", "error")
+        arquivos = request.files.getlist("arquivos")
+        if not arquivos:
+            flash("Nenhum arquivo foi selecionado. Por favor, selecione uma pasta.", "error")
             return redirect(url_for("index"))
 
         try:
-            tabelas = carregar_tabelas(diretorio)
             tabelas_encontradas.clear()
-
-            # Salvar tabelas no diretório temporário e guardar os caminhos
             session["tabelas"] = {}
-            for nome_tabela, tabela in tabelas.items():
-                temp_path = os.path.join(temp_dir, f"{nome_tabela}.pkl")
-                tabela.to_pickle(temp_path)
-                session["tabelas"][nome_tabela] = temp_path
 
-                if nome_tabela in tabelas_necessarias:
-                    tabelas_encontradas.add(nome_tabela)
+            for arquivo in arquivos:
+                if arquivo.filename.endswith(".csv"):
+                    # Salva o arquivo no diretório temporário corretamente
+                    nome_arquivo = os.path.basename(arquivo.filename)  # Nome puro do arquivo
+                    temp_path = os.path.join(temp_dir, nome_arquivo)
+                    
+                    arquivo.save(temp_path)  # Salva o arquivo no diretório temporário
 
+                    # Ler o arquivo usando open() com errors="replace"
+                    with open(temp_path, mode="r", encoding="utf-8", errors="replace") as f:
+                        tabela = pd.read_csv(f, delimiter=";") 
+                        # tabela = csv.reader(f, delimiter=';')
+                    # Nome da tabela
+                    nome_tabela = nome_arquivo.replace("v_", "").replace("_CodEmpresa_92577.csv", "")
+
+                    # Salvar DataFrame como pickle
+                    pickle_path = os.path.join(temp_dir, f"{nome_tabela}.pkl")
+                    tabela.to_pickle(pickle_path)
+
+                    session["tabelas"][nome_tabela] = pickle_path
+                    if nome_tabela in tabelas_necessarias:
+                        tabelas_encontradas.add(nome_tabela)
+
+
+            # Verificar tabelas faltantes
             faltando = tabelas_necessarias - tabelas_encontradas
             if faltando:
                 flash(f"As seguintes tabelas estão faltando: {', '.join(faltando)}", "warning")
@@ -84,6 +71,7 @@ def index():
         return redirect(url_for("index"))
 
     return render_template("index.html", tabelas_encontradas=tabelas_encontradas)
+
 
 @app.route("/apagar_dados", methods=["POST"])
 def apagar_dados():

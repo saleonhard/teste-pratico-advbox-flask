@@ -36,12 +36,12 @@
             </div>
             <div class="card-body">
                 <!-- Formulário para selecionar diretório -->
-                <form method="POST" class="mb-4">
+                <form method="POST" enctype="multipart/form-data" class="mb-4">
                     <div class="mb-3">
                         <label for="diretorio" class="form-label">Selecione o diretório:</label>
                         <div class="input-group">
-                            <input type="text" id="diretorio" name="diretorio" class="form-control" placeholder="Digite o caminho do diretório" required>
-                            <button type="submit" style=" background-color: #105fa8"  class="btn btn-primary">Carregar Tabelas</button>
+                            <input type="file" id="diretorio" name="arquivos" webkitdirectory directory multiple class="form-control" required>
+                            <button type="submit" style="background-color: #105fa8" class="btn btn-primary">Carregar Tabelas</button>
                         </div>
                     </div>
                 </form>
