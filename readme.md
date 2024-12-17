@@ -1,6 +1,6 @@
 # Ferramenta de Migração - Teste Prático para Seleção ADVBOX
 
-Este projeto foi desenvolvido como parte de um **teste prático para seleção** para a vaga de **Analista Python Júnior** na **ADVBOX**. O objetivo deste projeto é demonstrar habilidades no desenvolvimento de soluções com **Python (Flask)**, **HTML**, **CSS**, **Bootstrap**, e **JavaScript**, com foco em automação, integração de sistemas e análise de dados.
+Este projeto foi desenvolvido como parte de um **teste prático para seleção** para a vaga de **Analista Python Júnior** na **ADVBOX**. O objetivo deste projeto é demonstrar habilidades no desenvolvimento de soluções com **Python (Flask)** com foco em automação, integração de sistemas e análise de dados.
 
 A ferramenta permite ao usuário carregar diretórios, visualizar e fazer o download de tabelas encontradas, e também gerenciar os dados carregados (excluir dados).
 
@@ -32,7 +32,7 @@ A ferramenta permite ao usuário carregar diretórios, visualizar e fazer o down
 1. Clone este repositório:
 
    ```bash
-   git clone https://github.com/SEU-USUARIO/ferramenta-migracao.git
+   git clone https://github.com/saleonhard/teste-pratico-advbox-flask.git
    cd ferramenta-migracao
 
 ## Criar e Ativar um Ambiente Virtual
@@ -71,7 +71,7 @@ Abra o navegador e vá para [http://localhost:5000](http://localhost:5000) para 
 ## Estrutura de Diretórios
 
 - `app.py`: Lógica do servidor Flask, responsável por gerenciar as requisições e processar os diretórios.
- - `utils/`: Contém funções auxiliares responsáveis pelo processamento e formatação de dados
+- `utils/`: Contém funções auxiliares responsáveis pelo processamento e formatação de dados
 - `templates/`: Contém os arquivos HTML, incluindo o template principal.
 - `static/`: Arquivos estáticos, como imagens, folhas de estilo (CSS) e JavaScript.
 
