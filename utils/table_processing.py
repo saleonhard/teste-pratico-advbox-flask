@@ -44,9 +44,9 @@ def processar_tabela_clientes(tabela):
 
     # Atualizando a origem do cliente com base na coluna tipocliente
     df['ORIGEM DO CLIENTE'] = df['tipocliente'].map({
-        '1': 'MIGRAÇÃO',
-        '2': 'PARTE CONTRÁRIA',
-        '3': 'TERCEIRO'
+        1: 'MIGRAÇÃO',
+        2: 'PARTE CONTRÁRIA',
+        3: 'TERCEIRO'
     }).fillna('MIGRAÇÃO')  # Caso o valor de tipocliente não seja 1, 2 ou 3, será 'MIGRAÇÃO'
 
     # Inicializando a coluna ANOTAÇÕES GERAIS
