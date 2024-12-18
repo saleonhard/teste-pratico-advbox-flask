@@ -74,6 +74,7 @@ def index():
 
 @app.route("/apagar_dados", methods=["POST"])
 def apagar_dados():
+
     # Verificar se as tabelas foram carregadas
     if "tabelas" not in session or not session["tabelas"]:
         flash("Nenhuma tabela foi carregada. Não há dados para apagar.", "warning")
