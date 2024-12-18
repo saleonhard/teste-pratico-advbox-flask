@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import os
 import pandas as pd
 import tempfile
-import csv
 from utils.table_processing import processar_tabela_clientes, processar_tabela_processos
 
 app = Flask(__name__)
@@ -28,7 +27,7 @@ def index():
     if request.method == "POST":
         arquivos = request.files.getlist("arquivos")
         if not arquivos:
-            flash("Nenhum arquivo foi selecionado. Por favor, selecione uma pasta.", "error")
+            flash("Nenhum arquivo foi selecionado. Por favor, selecione uma pasta.", "danger")
             return redirect(url_for("index"))
 
         try:
@@ -66,7 +65,7 @@ def index():
             else:
                 flash("Tabelas carregadas com sucesso!", "success")
         except Exception as e:
-            flash(f"Erro ao carregar tabelas: {str(e)}", "error")
+            flash(f"Erro ao carregar tabelas: {str(e)}", "danger")
 
         return redirect(url_for("index"))
 
@@ -87,7 +86,7 @@ def apagar_dados():
         tabelas_encontradas.clear()
         flash("Dados apagados com sucesso.", "success")
     except Exception as e:
-        flash(f"Erro ao apagar dados: {str(e)}", "error")
+        flash(f"Erro ao apagar dados: {str(e)}", "danger")
 
     return redirect(url_for("index"))
 
@@ -96,7 +95,7 @@ def apagar_dados():
 @app.route("/download/<string:nome_tabela>", methods=["GET"])
 def download(nome_tabela):
     if "tabelas" not in session or nome_tabela not in session["tabelas"]:
-        flash("Tabela não encontrada para exportação.", "error")
+        flash("Tabela não encontrada para exportação.", "danger")
         return redirect(url_for("index"))
 
     try:
@@ -125,7 +124,7 @@ def download(nome_tabela):
         # Retornar arquivo para download
         return send_file(output_path, as_attachment=True, download_name=f"{nome_tabela.upper()}.xlsx")
     except Exception as e:
-        flash(f"Erro ao exportar tabela: {str(e)}", "error")
+        flash(f"Erro ao exportar tabela: {str(e)}", "danger")
         return redirect(url_for("index"))
 
 if __name__ == "__main__":
