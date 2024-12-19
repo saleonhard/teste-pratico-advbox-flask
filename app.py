@@ -20,8 +20,8 @@ def index():
 
     # Limpar dados na sessão em caso de nova sessão
     if session.new or "tabelas" not in session:
-        tabelas_encontradas.clear()
-        session.clear()
+        #tabelas_encontradas.clear() <-- VERIFICAR
+        #session.clear() <-- VERIFICAR
         session.modified = True
 
     if request.method == "POST":
@@ -45,7 +45,6 @@ def index():
                     # Ler o arquivo usando open() com errors="replace"
                     with open(temp_path, mode="r", encoding="utf-8", errors="replace") as f:
                         tabela = pd.read_csv(f, delimiter=";") 
-                        # tabela = csv.reader(f, delimiter=';')
                     # Nome da tabela
                     nome_tabela = nome_arquivo.replace("v_", "").replace("_CodEmpresa_92577.csv", "")
 
@@ -82,12 +81,14 @@ def apagar_dados():
 
     try:
         # Apagar os dados das tabelas na sessão
-        session.pop("tabelas", None)  # Remove as tabelas da sessão
+        #session.pop("tabelas", None)  # Remove as tabelas da sessão <-- VERIFICAR
+        #session.clear() # Limpa toda a sessão  <-- VERIFICAR
         session.modified = True  # Marca a sessão como modificada
         tabelas_encontradas.clear()
         flash("Dados apagados com sucesso.", "success")
     except Exception as e:
         flash(f"Erro ao apagar dados: {str(e)}", "danger")
+
 
     return redirect(url_for("index"))
 
